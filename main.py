@@ -83,7 +83,7 @@ def deploy ( branch, setting ):
 
 		clone = False
 		cmd = CMD ( )
-		cmd.open ( "rm -rf %s" % repos_path )
+		# cmd.open ( "rm -rf %s" % repos_path )
 
 
 		if not os.path.exists ( repos_path ):
