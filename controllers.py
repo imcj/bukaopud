@@ -74,6 +74,8 @@ class GitHub:
 
         p = Process ( target = main.deploy, args = ( "dev", main.setting ) )
         p.start ( )
+
+        print ( "pid %d started." % p.pid )
         payload = simplejson.loads ( raw_payload )
         if payload.has_key ( "ref" ):
             refs = payload['ref']

@@ -77,6 +77,7 @@ class CMD:
 def deploy ( branch, setting ):
 
 	def _deploy ( branch, setting ):
+		print "enter deploy function."
 
 		repos_path = os.path.join ( REPOSITORY_DIR, "post_bar" )
 
@@ -101,15 +102,20 @@ def deploy ( branch, setting ):
 		cmd.open ( "af login %(ap_email)s --passwd %(ap_passwd)s" % setting  )
 		cmd.open ( "af update %(ap_app)s" % setting  )
 		cmd.open ( "af logs %(ap_app)s" % setting  )
+
 		# cmd.open ( "ruby %(application_root)s/af/bin/af login %(ap_email)s --passwd %(ap_passwd)s" % setting  )
 		# cmd.open ( "ruby %(application_root)s/af/bin/af update %(ap_app)s" % setting  )
 		# cmd.open ( "ruby %(application_root)s/af/bin/af logs %(ap_app)s" % setting  )
 
 		mail ( cmd.allDescription ( ) )
 
+		print cmd.allDescription ( )
+		print "over"
+
 	try:
 		_deploy ( branch, setting )
 	except Exception, e:
+		print e
 		mail ( e )
 
 def mail ( content ):
