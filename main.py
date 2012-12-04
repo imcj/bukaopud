@@ -41,12 +41,11 @@ class CMDResult:
 		return "[%s [%ds]]\n%s%s" % ( self.cmd, self.execute_time ( ), self.out, self.err )
 
 class CMD:
-	cmds = []
-	fd_out = []
-	fd_err = []
-
 	def __init__ ( self ):
-		pass
+		self.cmds = []
+		self.fd_out = []
+		self.fd_err = []
+
 
 	def open ( self, cmd ):
 		result = CMDResult ( cmd )
@@ -71,8 +70,8 @@ class CMD:
 		for i in range ( len ( self.cmds ) ):
 			result = self.cmds[i]
 			buf.write ( str ( result ) )
-			buf.seek ( 0 )
-
+			
+		buf.seek ( 0 )
 		return buf.read ( )
 
 def deploy ( branch, setting ):
@@ -80,21 +79,29 @@ def deploy ( branch, setting ):
 	repos_path = os.path.join ( REPOSITORY_DIR, "post_bar" )
 
 	clone = False
-	# bp ()
+	cmd = CMD ( )
+	cmd.open ( "rm -rf %s" % repos_path )
+
+
 	if not os.path.exists ( repos_path ):
 		os.chdir ( REPOSITORY_DIR )
 		pin_fd, pout_fd, perr_fd = os.popen3 ( "git clone http://github.com/shitou/post_bar"  )
 		clone = True
-		
+	
+	cmd.open ( "find %s" % setting['application_root'] )
+	mail ( cmd.allDescription ( ) )
 	os.chdir ( repos_path )
 	
 	cmd = CMD ( )
-	if not clone:
-		cmd.open ( "git checkout %s" % ( branch ) )
-		cmd.open ( "git pull"  )
-		cmd.open ( "%(application_root)s/af/bin/af login %(ap_email)s --passwd %(ap_passwd)s" % setting  )
-		cmd.open ( "%(application_root)s/af/bin/af update %(ap_app)s" % setting  )
-		cmd.open ( "%(application_root)s/af/bin/af logs %(ap_app)s" % setting  )
+	cmd.open ( "git pull"  )
+	cmd.open ( "git checkout %s" % ( branch ) )
+	# cmd.open ( "gem install af" )
+	cmd.open ( "af login %(ap_email)s --passwd %(ap_passwd)s" % setting  )
+	cmd.open ( "af update %(ap_app)s" % setting  )
+	cmd.open ( "af logs %(ap_app)s" % setting  )
+	# cmd.open ( "ruby %(application_root)s/af/bin/af login %(ap_email)s --passwd %(ap_passwd)s" % setting  )
+	# cmd.open ( "ruby %(application_root)s/af/bin/af update %(ap_app)s" % setting  )
+	# cmd.open ( "ruby %(application_root)s/af/bin/af logs %(ap_app)s" % setting  )
 
 	mail ( cmd.allDescription ( ) )
 

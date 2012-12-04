@@ -6,6 +6,7 @@ import simplejson
 import main
 
 from pdb import set_trace as bp
+from multiprocessing import Process
 
 github = {
   "before": "5aef35982fb2d34e9d9d4502f6ede1072793222d",
@@ -49,25 +50,32 @@ github = {
 }
 
 class DoIt:
-	def __init__ ( self ):
-		pass
+    def __init__ ( self ):
+        pass
+
+class GitHubPayload:
+    def GET ( self ):
+        try:
+            fd = open ( "github.txt", "r" )
+            payload = fd.read ( )
+            fd.close ( )
+        except:
+            payload = ""
+
+        return payload
 
 class GitHub:
-	def POST ( self ):
-		raw_payload = web.input ( payload = "{}" ).payload.encode ( "utf-8" )
-		pid = os.fork ( )
-		if 0 == pid:
-			main.deploy ( "dev", main.setting )
-			sys.exit ( )
-		fd = open ( "test.txt", "w+" )
-		fd.write ( raw_payload )
-		fd.close ( )
-		payload = simplejson.loads ( raw_payload )
-		if payload.has_key ( "ref" ):
-			refs = payload['ref']
+    def POST ( self ):
+        raw_payload = web.input ( payload = "{}" ).payload.encode ( "utf-8" )
+        
+        fd = open ( "github.txt", "w+" )
+        fd.write ( raw_payload )
+        fd.close ( )
 
-		# pid = os.fork ( )
-		# if 0 == pid:
-		# 	main.mail ( raw_payload )
-		# 	sys.exit ( )
-		return ""
+        p = Process ( target = main.deploy, args = ( "dev", main.setting ) )
+        p.start ( )
+        payload = simplejson.loads ( raw_payload )
+        if payload.has_key ( "ref" ):
+            refs = payload['ref']
+
+        return ""

@@ -4,7 +4,10 @@
 import web
 import controllers
 
-app = web.application ( ( '/github/', 'controllers.GitHub' ), globals ( ) )
+app = web.application (
+	( '/github/', 'controllers.GitHub',
+	  '/github/payload/', 'controllers.GitHubPayload' ),
+	globals ( ) )
 
 application = app.wsgifunc ( )
 
