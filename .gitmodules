@@ -1,0 +1,6 @@
+[submodule "af"]
+	path = af
+	url = https://github.com/appfog/af
+[submodule "repos/post_bar"]
+	path = repos/post_bar
+	url = https://github.com/shitou/post_bar
